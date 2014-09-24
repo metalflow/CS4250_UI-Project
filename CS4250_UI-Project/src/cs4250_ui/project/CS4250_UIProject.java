@@ -1,22 +1,28 @@
 package cs4250_ui.project;
 
 import java.awt.Desktop;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 
 public final class CS4250_UIProject extends Application {
 
@@ -53,7 +59,8 @@ public final class CS4250_UIProject extends Application {
                 }
             });
 
-
+        // Build sample scene with two buttons for loading text or images
+        // Can be swapped out for whatever UI components that are implemented
         final GridPane inputGridPane = new GridPane();
 
         GridPane.setConstraints(openButton, 0, 1);
@@ -80,7 +87,7 @@ public final class CS4250_UIProject extends Application {
             fileChooser.setInitialDirectory(
                 new File(System.getProperty("user.home"))
             );                 
-            fileChooser.getExtensionFilters().addAll(
+            fileChooser.getExtensionFilters().setAll(
                 new FileChooser.ExtensionFilter("JPG", "*.jpg"),
                 new FileChooser.ExtensionFilter("PNG", "*.png")
             );
@@ -92,7 +99,7 @@ public final class CS4250_UIProject extends Application {
             fileChooser.setInitialDirectory(
                 new File(System.getProperty("user.home"))
             );                 
-            fileChooser.getExtensionFilters().addAll(
+            fileChooser.getExtensionFilters().setAll(
                 new FileChooser.ExtensionFilter("Text", "*.txt")
             );
     }
@@ -111,5 +118,45 @@ public final class CS4250_UIProject extends Application {
             );
         }
     }
-
+    
+    /*      
+            Charles & Jaime, sample usage with preferred FileChooser for 
+            save location.  Extracts an image from an ImageView.
+            Not 100% positive saveImage or saveText work without integration 
+            with UI.  Will work with you if there are any hangups with these 
+            methods.
+            
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Image");
+            File file = fileChooser.showSaveDialog(stage);
+            saveImage(file, imgView);
+    */
+    private boolean saveImage(File file, ImageView imgView){
+        if (file != null) {
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(imgView.getImage(),
+                    null), "png", file);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean saveText(File file, String text){
+        if (file != null) {
+            Charset charset = Charset.forName("US-ASCII");
+            try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), charset)) {
+                writer.write(text, 0, text.length());
+            } catch (IOException x) {
+                System.err.format("IOException: %s%n", x);
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }
+    
