@@ -10,7 +10,6 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-/CS4250_UI-Project/nbproject/
-/CS4250_UI-Project/nbproject/*
-/CS4250_UI-Project/build/
-/CS4250_UI-Project/dist/
+/nbproject/
+/build/
+/dist/
